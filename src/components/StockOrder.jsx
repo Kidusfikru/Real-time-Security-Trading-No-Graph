@@ -50,8 +50,8 @@ const StockOrder = ({ data }) => {
   }
 
   const cardData = {
-    title: globalQuoteData["01. symbol"],
-    subtitle: globalQuoteData["01. symbol"],
+    title: security,
+    subtitle: security,
     price: globalQuoteData["05. price"],
     change: parseFloat(globalQuoteData["09. change"]),
   };
@@ -67,13 +67,12 @@ const StockOrder = ({ data }) => {
   const handleInputSecurity = (event) => {
     const inputSecurity = event.target.value;
     setSecurity(inputSecurity);
-    if (security != globalQuoteData["01. symbol"]) {
+    if (inputSecurity.trim() !== globalQuoteData["01. symbol"].trim()) {
       setSecurityError(true);
+    } else {
+      setSecurityError(false);
     }
-    setSharesError(false);
   };
-
-  console.log(securityError);
 
   const handleChipClick = (chipLabel) => {
     setSelectedChip(chipLabel === selectedChip ? null : chipLabel);
@@ -108,8 +107,6 @@ const StockOrder = ({ data }) => {
   };
 
   const finalFormatted = (cardData?.price * numberOfShares).toFixed(2) || "";
-
-  console.log(limit);
 
   return (
     <div>
@@ -263,10 +260,10 @@ const StockOrder = ({ data }) => {
                 component="div"
                 color={colors.white[100]}
               >
-                {cardData?.title}
+                {securityError ? "--" : cardData?.title}
               </Typography>
               <Typography variant="h4" color={colors.white[100]}>
-                {cardData?.subtitle}
+                {securityError ? "--" : cardData?.subtitle}
               </Typography>
             </CardContent>
             <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
@@ -275,21 +272,27 @@ const StockOrder = ({ data }) => {
                 component="div"
                 color={colors.white[100]}
               >
-                $ {Number(cardData?.price)?.toFixed(0)}
+                {securityError
+                  ? "--"
+                  : `$ ${Number(cardData?.price)?.toFixed(0)}`}
               </Typography>
-              <Icon>
-                {isPositiveChange ? (
-                  <ArrowUpwardIcon style={{ color: "green" }} />
-                ) : (
-                  <ArrowDownwardIcon style={{ color: "red" }} />
-                )}
-              </Icon>
-              <Typography
-                variant="body2"
-                color={isPositiveChange ? "green" : "red"}
-              >
-                {cardData?.change} %
-              </Typography>
+              {!securityError && (
+                <>
+                  <Icon>
+                    {isPositiveChange ? (
+                      <ArrowUpwardIcon style={{ color: "green" }} />
+                    ) : (
+                      <ArrowDownwardIcon style={{ color: "red" }} />
+                    )}
+                  </Icon>
+                  <Typography
+                    variant="body2"
+                    color={isPositiveChange ? "green" : "red"}
+                  >
+                    {cardData?.change} %
+                  </Typography>
+                </>
+              )}
             </Box>
           </Card>
         </Box>
